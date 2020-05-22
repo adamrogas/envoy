@@ -170,9 +170,9 @@ void GoogleAsyncStreamImpl::initialize(bool /*buffer_body_for_retry*/) {
   }
   // Due to the different HTTP header implementations, we effectively double
   // copy headers here.
-  Http::RequestHeaderMapImpl initial_metadata;
-  callbacks_.onCreateInitialMetadata(initial_metadata);
-  initial_metadata.iterate(
+  auto initial_metadata = Http::RequestHeaderMapImpl::create();
+  callbacks_.onCreateInitialMetadata(*initial_metadata);
+  initial_metadata->iterate(
       [](const Http::HeaderEntry& header, void* ctxt) {
         auto* client_context = static_cast<grpc::ClientContext*>(ctxt);
         client_context->AddMetadata(std::string(header.key().getStringView()),
@@ -311,7 +311,7 @@ void GoogleAsyncStreamImpl::handleOpCompletion(GoogleAsyncTag::Operation op, boo
     ASSERT(call_initialized_);
     rw_->Read(&read_buf_, &read_tag_);
     ++inflight_tags_;
-    Http::ResponseHeaderMapPtr initial_metadata = std::make_unique<Http::ResponseHeaderMapImpl>();
+    Http::ResponseHeaderMapPtr initial_metadata = Http::ResponseHeaderMapImpl::create();
     metadataTranslate(ctxt_.GetServerInitialMetadata(), *initial_metadata);
     callbacks_.onReceiveInitialMetadata(std::move(initial_metadata));
     break;

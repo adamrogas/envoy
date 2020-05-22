@@ -13,6 +13,9 @@ namespace Extensions {
 namespace HttpFilters {
 namespace Cors {
 
+Http::RegisterCustomInlineHeader<Http::RequestHeaderMap> access_control_request_method(
+    Http::Headers::get().AccessControlRequestMethod);
+
 CorsFilterConfig::CorsFilterConfig(const std::string& stats_prefix, Stats::Scope& scope)
     : stats_(generateStats(stats_prefix + "cors.", scope)) {}
 
@@ -59,8 +62,8 @@ Http::FilterHeadersStatus CorsFilter::decodeHeaders(Http::RequestHeaderMap& head
     return Http::FilterHeadersStatus::Continue;
   }
 
-  const auto requestMethod = headers.AccessControlRequestMethod();
-  if (requestMethod == nullptr || requestMethod->value().empty()) {
+  const auto request_method = headers.getInline(access_control_request_method.handle());
+  if (request_method == nullptr || request_method->value().empty()) {
     return Http::FilterHeadersStatus::Continue;
   }
 

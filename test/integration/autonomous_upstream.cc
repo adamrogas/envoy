@@ -41,7 +41,7 @@ void AutonomousStream::setEndStream(bool end_stream) {
 
 // Check all the special headers and send a customized response based on them.
 void AutonomousStream::sendResponse() {
-  Http::TestHeaderMapImpl headers(*headers_);
+  Http::TestResponseHeaderMapImpl headers(*headers_);
   upstream_.setLastRequestHeaders(*headers_);
 
   int32_t request_body_length = -1;
@@ -116,9 +116,9 @@ void AutonomousUpstream::setResponseHeaders(
   response_headers_ = std::move(response_headers);
 }
 
-Http::TestHeaderMapImpl AutonomousUpstream::responseHeaders() {
+Http::TestResponseHeaderMapImpl AutonomousUpstream::responseHeaders() {
   Thread::LockGuard lock(headers_lock_);
-  Http::TestHeaderMapImpl return_headers = *response_headers_;
+  Http::TestHeaderResponseMapImpl return_headers = *response_headers_;
   return return_headers;
 }
 

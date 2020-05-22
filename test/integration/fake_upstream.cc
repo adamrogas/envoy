@@ -218,7 +218,7 @@ void FakeStream::startGrpcStream() {
 
 void FakeStream::finishGrpcStream(Grpc::Status::GrpcStatus status) {
   encodeTrailers(
-      Http::TestHeaderMapImpl{{"grpc-status", std::to_string(static_cast<uint32_t>(status))}});
+      Http::TestResponseTrailerMapImpl{{"grpc-status", std::to_string(static_cast<uint32_t>(status))}});
 }
 
 // The TestHttp1ServerConnectionImpl outlives its underlying Network::Connection

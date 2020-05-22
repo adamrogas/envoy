@@ -1811,7 +1811,7 @@ ResponseTrailerMap& ConnectionManagerImpl::ActiveStream::addEncodedTrailers() {
   // Trailers can only be added once.
   ASSERT(!response_trailers_);
 
-  response_trailers_ = std::make_unique<ResponseTrailerMapImpl>();
+  response_trailers_ = ResponseTrailerMapImpl::create();
   return *response_trailers_;
 }
 
